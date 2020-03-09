@@ -1,0 +1,18 @@
+signup
+
+--db-skedler
+--table-userdetails
+
+-firstname
+-lastname
+-username
+-password
+-org
+-role
+
+
+
+migrate
+--to elasticsearch --
+type:userdetails
+body:SQL_data
