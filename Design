@@ -16,3 +16,29 @@ migrate
 --to elasticsearch --
 type:userdetails
 body:SQL_data
+
+
+    // migrateUserDetails() {
+    //     return new Promise(async (resolve, reject) => {
+    //         try {
+    //             var data = await sqlUser.getUserDetails();
+    //             for (var userData of data) {
+    //                 // console.log('user ',user)
+    //                 userData.type = 'user';
+    //                 var {
+    //                     body
+    //                 } = await client.index({
+
+    //                     index: '.skedler',
+    //                     body: userData,
+    //                     id: userData.id
+
+    //                 });
+    //             }
+    //             await sqlUser.dropUserDetails();
+    //             resolve('success');
+    //         } catch (e) {
+    //             reject(e)
+    //         }
+    //     })
+    // }

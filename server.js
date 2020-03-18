@@ -1,85 +1,52 @@
 const express = require('express');
 const app = express();
-const {
-    sqlUserDetails
-} = require('./sqlDAO')
-const sqlUser = new sqlUserDetails();
-const {
-    elkUserDetails
-} = require('./esDAO');
-const elkUser = new elkUserDetails();
 const bodyParser = require('body-parser');
-const {
-    migrateUserData
-} = require('./esDAO');
 const router = express.Router();
 global.dataStore = 'sqlite'
+const {
+    userDetails
+} = require('./helper/userHelper');
+var data = {
+    firstName: 'Jane',
+    lastName: 'Doe',
+    username: 'janedoe',
+    password: 'janedoe123',
+    org: 'skedler',
+    role: 'engineer'
+}
 
-// router.post('/signup', function(req, res) {
-//     var data = req.body.data;
-//     if (dataStore == 'sqlite') {
-//         sqlUser.addUserDetails(data).then(value => {
-//             res.send('Success')
-//         }).catch(err => res.send(err))
-//     } else {
-
-//     }
-// });
-router.get('/getAllUsers',function(req,res){
-	    if (dataStore == 'sqlite') {
-        sqlUser.getUserDetails().then(value => {
-            res.send(value)
-        }).catch(err => res.send(err))
-    } else {
-        elkUser.getUserDetails().then(value => res.send('Success')).catch(err => res.send(err))
-    }
+router.get('/getAllUsers', function(req, res) {
+    userDetails.getUserDetails(dataStore).then(value => {
+        res.send(value)
+    })
 
 })
 router.post('/signup', function(req, res) {
     var data = req.body.data;
-    console.log('signup ',dataStore)
-    if (dataStore == 'sqlite') {
-        sqlUser.addUserDetails(data).then(value => {
-            res.send('Success')
-        }).catch(err => res.send(err))
-    } else {
-        elkUser.addUserDetails(data).then(value => res.send('Success')).catch(err => res.send(err))
-    }
+    userDetails.addUserDetails(dataStore, data).then(value => {
+        res.send(value)
+    })
+
 });
 router.post('/update', function(req, res) {
     var data = req.body.data;
-    console.log('signup ',dataStore)
-    if (dataStore == 'sqlite') {
-        sqlUser.updateUserDetails(data).then(value => {
-            res.send('Success')
-        }).catch(err => res.send(err))
-    } else {
-        elkUser.updateUserDetails(data).then(value => res.send('Success')).catch(err => res.send(err))
-    }
+    var id = req.body.id
+    console.log('signup ', dataStore)
+    userDetails.updateUserDetails(dataStore, data, id).then(value => {
+        res.send(value)
+    }).catch(err => {
+        console.log('res.send(value) 0', err)
+        res.send(err);
+    })
 });
 router.post('/delete', function(req, res) {
     var id = req.body.id;
-    console.log('signup ',id)
-    if (dataStore == 'sqlite') {
-        sqlUser.deleteUserDetails(id).then(value => {
-        	console.log('$$$$$$$$$$$$$$$$$$$$$$$$$')
-            res.send('Success')
-        }).catch(err => res.send(err))
-    } else {
-        elkUser.deleteUserDetails(id).then(value => res.send('Success')).catch(err => res.send(err))
-    }
-});
-router.post('/migrate', function(req, res) {
-    console.log('migrate ',dataStore)
-
-    dataStore = 'elk';
-    console.log('migrate ',dataStore)
-
-    elkUser.migrateUserDetails().then(function(response) {
-        res.send(response);
-    }).catch(function(err) {
-        res.send(err)
-    });
+    console.log('signup ', id)
+    userDetails.deleteUserDetails(dataStore, id).then(value => {
+        res.send(value)
+    }).catch(err => {
+        reject(err);
+    })
 });
 
 app.use(bodyParser.json())
